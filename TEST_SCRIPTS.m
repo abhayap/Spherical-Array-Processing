@@ -72,6 +72,9 @@
 % regularized inversion, which determines the amount of regularization
 % needed in order not to exceed this threshold.
 
+path('../Spherical-Harmonic-Transform',path);
+path('../Array-Response-Simulator',path);
+
 clear all; close all;
 
 % Simulate a nearly uniform array of 32 microphones on a rigid baffle, with 
@@ -211,7 +214,7 @@ h = gcf; h.Position(3) = 1.5*h.Position(3); h.Position(4) = 1.5*h.Position(4);
 %%
 
 % Invert the full theoretical array response matrix, as proposed in [ref4]
-M_mic2sh_regLS = arraySHTfiltersTheory_regLS(R, mic_dirs_rad, sht_order, Lfilt, fs, maxG_dB);
+[M_mic2sh_regLS, h_filt] = arraySHTfiltersTheory_regLS(R, mic_dirs_rad, sht_order, Lfilt, fs, maxG_dB);
 evaluateSHTfilters(M_mic2sh_regLS, H_array_sim, fs, Y_grid);
 sgtitle('Ideal array - Regularized array response matrix inversion');
 h = gcf; h.Position(3) = 1.5*h.Position(3); h.Position(4) = 1.5*h.Position(4);
