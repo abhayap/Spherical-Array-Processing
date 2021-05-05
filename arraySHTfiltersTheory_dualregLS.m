@@ -1,4 +1,4 @@
-function [H_filt, h_filt, H_array] = arraySHTfiltersTheory_dualregLS(R, rho, mic_dirsAziElev, order_sht, Lfilt, fs, amp_threshold)
+function [H_filt, h_filt, H_array] = arraySHTfiltersTheory_dualregLS(R, rho, mic_dirsAziElev, micR, micO, order_sht, Lfilt, fs, amp_threshold)
 %ARRAYSHTFILTERSTHEORY_DUALREGLS Generate SHT filters based on theoretical responses
 %(regularized least-squares)
 %
@@ -47,7 +47,8 @@ if order_sht>sqrt(Nmic)-1
 end
 
 mic_dirsAziIncl = [mic_dirsAziElev(:,1) pi/2-mic_dirsAziElev(:,2)];
-order_array = ceil(2*R*rho*k_max);
+order_array = floor(min(85,2*R*rho*k_max));
+disp(order_array)
 Y_array = sqrt(4*pi)*getSH(order_array, mic_dirsAziIncl, 'real');
 
 % modal responses
@@ -59,7 +60,7 @@ H_array = zeros(Nmic, (order_array+1)^2, length(f));
 for kk=1:length(f)
     temp_br = bNrigid(kk,:).';
     temp_bo = bNopen(kk,:).';
-    temp_b = [repmat(temp_br,1,32), repmat(temp_bo,1,32)];
+    temp_b = [repmat(temp_br,1,micR), repmat(temp_bo,1,micO)];
     B = replicatePerOrder(temp_b).';
     H_array(:,:,kk) = Y_array .* B;
 end
